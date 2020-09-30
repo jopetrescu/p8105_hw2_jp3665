@@ -4,3 +4,68 @@ author: "Joana Petrescu"
 date: "9/30/2020"
 output: github_document
 ---
+
+```{r, message = FALSE}
+
+library(readxl)
+library(dplyr)
+library(tidyverse)
+
+```
+
+
+# Problem 1
+
+## Reading the Mr. Trash Wheel dataset
+
+I already created a subdirectory for the data used in this problem set and I downloaded the `Trash-Wheel-Collection-Totals-8-6-19.xlsx` file to this subdirectory
+
+Read each sheet in the Excel file and save each sheet as a variable
+
+```{r}
+
+excel_sheets("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx")
+
+Mr_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", skip = 1)
+
+Prof_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Professor Trash Wheel", skip = 1)
+
+Capt_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Captain Trash Wheel", skip = 1)
+
+precip_2019_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", skip = 1)
+
+precip_2018_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", skip = 1)
+
+precip_2017_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2017 Precipitation", skip = 1)
+
+precip_2016_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2016 Precipitation", skip = 1)
+
+precip_2015_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2015 Precipitation", skip = 1)
+
+precip_2014_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2014 Precipitation", skip = 1)
+
+
+```
+
+Remove blank columns from`Mr_data`
+
+```{r}
+
+head(Mr_data)
+
+Mr_data <- select(Mr_data, -...15, -...16, -...17)
+
+```
+
+Omit rows that do not include dumpster specific names
+
+```{r}
+
+Mr_data <- Mr_data %>% drop_na(Dumpster)
+
+Prof_data <- Prof_data %>% drop_na(Dumpster)
+
+Capt_data <- Capt_data %>% drop_na(Dumpster)
+
+```
+
