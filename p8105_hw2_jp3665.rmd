@@ -47,6 +47,8 @@ precip_2014_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx
 
 ```
 
+### Clean up Mr. Trash Wheel dataset
+
 Remove blank columns from`Mr_data`
 
 ```{r}
@@ -68,4 +70,68 @@ Prof_data <- Prof_data %>% drop_na(Dumpster)
 Capt_data <- Capt_data %>% drop_na(Dumpster)
 
 ```
+
+Round sports balls to nearest integer and convert to integer
+
+```{r}
+
+Mr_data$`Sports Balls` <-  round(Mr_data$`Sports Balls`, digits = 0)
+
+Mr_data$`Sports Balls` <-  as.integer(Mr_data$`Sports Balls`, digits = 0)
+
+```
+
+
+### Clean up precipitation data
+
+Clean and combine precipitation data for 2017 and 2018
+
+```{r}
+
+precip_2017_data <- precip_2017_data %>% drop_na(Month)
+
+precip_2018_data <- precip_2018_data %>% drop_na(Month)
+
+precip_2017_data <- mutate(precip_2017_data, Year = 2017)
+
+precip_2018_data <- mutate(precip_2018_data, Year = 2018)
+
+months <- list(name = month.name, num = 1:12)
+
+precip_2017_data <- precip_2017_data %>% mutate(Month = replace(Month, months$num, months$name))
+
+precip_2018_data <- precip_2018_data %>% mutate(Month = replace(Month, months$num, months$name))
+
+precip_2017_2018_data <- rbind(precip_2017_data, precip_2018_data)
+
+```
+
+
+### Description of Mr. Trash Wheel dataset
+
+This dataset now contains 344 observations of 14 variables. The variables represent the _dumpster number_, _date_, and number of the following objects that were found in each dumpster: _plastic bottles_, _polystyrene objects_, _cigarette butts_, _glass bottles_, _grocery bags_, _chip bags_, and _sports balls._ The values for _sports balls_ are currently in integer form.
+
+```{r}
+
+Mr_data_2017 <- filter(Mr_data, Year == "2017")
+
+median(Mr_data_2017$`Sports Balls`)
+
+```
+
+The median number of sports balls found in each dumpster in 2017 is 8.
+
+### Description of precipitation dataset
+
+The precipitation dataset for 2017 and 2018 now contains 24 observations for three variables: the _year_, _month_, and _total precipitation_. The month column now contains full month names.
+
+```{r}
+
+sum(precip_2018_data$Total)
+
+```
+
+The total precipitation in 2018 was 70.33.
+
+# Problem 2
 
