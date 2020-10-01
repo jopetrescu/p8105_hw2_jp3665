@@ -262,7 +262,7 @@ snp_data <- read.csv("./data/fivethirtyeight_datasets/snp.csv")
 
 ```
 
-## Cleaen pols_month_data
+## Clean pols_month_data
 
 Clean `pols_month_data` by parsing date into `year`, `month` and `day`, changing numeric months to full month names, and removing `day` column
 
@@ -291,6 +291,39 @@ pols_month_data <- pols_month_data %>% mutate("president" = ifelse(prez_gop == 1
 pols_month_data <- pols_month_data %>% select(-prez_gop, -prez_dem)
 
 head(pols_month_data)
+
+```
+
+## Clean snp_data
+
+Clean `snp.csv` by parsing `date` into `day`, `month` and `year`, replacing numeric months with full month names, removing the day column, and reorganizing with year and month as the first columns
+
+```{r}
+
+head(snp_data)
+
+snp_data <- separate(snp_data, "date", c("day", "month", "year"), sep = "/", remove = TRUE, extra = "warn", fill = "warn")
+
+snp_data$month <- as.numeric(snp_data$month)
+
+snp_data <- snp_data %>% mutate(month = replace(month, months$num, months$name))
+
+snp_data <- snp_data %>% select(-day)
+
+snp_data <- snp_data %>% select(year, month, close)
+
+head(snp_data)
+
+```
+
+
+## Clean unemployment_data
+
+```{r}
+
+head(unemployment_data)
+
+
 
 ```
 
