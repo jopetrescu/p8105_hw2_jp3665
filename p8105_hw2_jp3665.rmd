@@ -16,7 +16,7 @@ library(tidyverse)
 
 # Problem 1
 
-## Reading the Mr. Trash Wheel dataset
+## Read the Mr. Trash Wheel dataset
 
 I already created a subdirectory for the data used in this problem set and I downloaded the `Trash-Wheel-Collection-Totals-8-6-19.xlsx` file to this subdirectory
 
@@ -47,7 +47,7 @@ precip_2014_data <- read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx
 
 ```
 
-### Clean up Mr. Trash Wheel dataset
+## Clean up Mr. Trash Wheel dataset
 
 Remove blank columns from`Mr_data`
 
@@ -82,7 +82,7 @@ Mr_data$`Sports Balls` <-  as.integer(Mr_data$`Sports Balls`, digits = 0)
 ```
 
 
-### Clean up precipitation data
+## Clean up precipitation data
 
 Clean and combine precipitation data for 2017 and 2018
 
@@ -107,7 +107,7 @@ precip_2017_2018_data <- rbind(precip_2017_data, precip_2018_data)
 ```
 
 
-### Description of Mr. Trash Wheel dataset
+## Description of Mr. Trash Wheel dataset
 
 This dataset now contains 344 observations of 14 variables. The variables represent the _dumpster number_, _date_, and number of the following objects that were found in each dumpster: _plastic bottles_, _polystyrene objects_, _cigarette butts_, _glass bottles_, _grocery bags_, _chip bags_, and _sports balls._ The values for _sports balls_ are currently in integer form.
 
@@ -121,7 +121,7 @@ median(Mr_data_2017$`Sports Balls`)
 
 The median number of sports balls found in each dumpster in 2017 is 8.
 
-### Description of precipitation dataset
+## Description of precipitation dataset
 
 The precipitation dataset for 2017 and 2018 now contains 24 observations for three variables: the _year_, _month_, and _total precipitation_. The month column now contains full month names.
 
@@ -134,4 +134,100 @@ sum(precip_2018_data$Total)
 The total precipitation in 2018 was 70.33.
 
 # Problem 2
+
+## Read NYC Transit Subway Data
+
+I already created a subdirectory for the data used in this problem set and I downloaded the `NYC_Transit_Subway_Entrance_And_Exit_Data.csv` file to this subdirectory.
+
+Read the `.csv` file
+
+```{r}
+
+NYC_subway_dataset <- read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+
+```
+Retain line, station name, station latitude/longitude, routes served, entry, vending, entrance type, and ADA compliance
+
+```{r}
+
+NYC_subway_data <- select(NYC_subway_dataset, "Line", "Station Name", "Station Latitude", "Station Longitude", "Route1", "Route2", "Route3", "Route4", "Route5", "Route6", "Route7", "Route8", "Route9", "Route10", "Route11", "Entry", "Vending", "Entrance Type", "ADA")
+
+```
+
+Convert entry variable from _yes_ or _no_ values to logical variable
+
+```{r}
+
+NYC_subway_data$Entry <- ifelse(NYC_subway_data$Entry == "YES", TRUE, FALSE)
+
+```
+
+
+## Description of NYC Transit Subway Data
+
+This dataset describes subway stations in NYC. The dataset now consists of 1868 observations for 18 different varaibles. I omited columns from the original data set, retaining only variables for the _subway line_, _station name_, _station latitude and longitude_, _routes_, _station entry_, _vending_, _entrance type_, and _ADA compliance_. I then converted the variable describing whether or not entrance is allowed, _entry_, from a character variable (yes or no) to a logical variable (`TRUE` or `FALSE`). These data are now tidy in that they are more suited to answering the questions that follow about subway station entrances.
+
+Identify distinct subway stations
+
+```{r}
+
+NYC_subway_stations <- select(NYC_subway_data, "Line", "Station Name")
+
+nrow(distinct(NYC_subway_stations))
+
+```
+
+There are 465 distinct subway stations based on distinct combinations of subway lines and station names provided.
+
+Number of ADA compliant subway stations
+
+```{r}
+
+nrow(filter(NYC_subway_data, ADA == TRUE) %>% select("Line", "Station Name") %>% distinct())
+
+```
+
+There are 84 distinct subway stations that are ADA compliant.
+
+```{r}
+
+no_vending_data <- filter(NYC_subway_data, Vending == "NO")
+
+no_vending_entry_data <- filter(no_vending_data, Entry == TRUE)
+
+nrow(no_vending_entry_data) / nrow(no_vending_data)
+
+```
+
+Approximately 38% of station entrances/exits with vending allow entrance based on this data.
+
+## Reformat NYC Transit Subway data by route name
+
+Reformat data so that route number and route name are distinct variables
+
+```{r}
+
+NYC_subway_data <- unite(NYC_subway_data, "Route Name", Route1:Route11, sep = "", na.rm = TRUE)
+
+NYC_subway_data <- mutate(NYC_subway_data, "Route Number" = str_count(NYC_subway_data$`Route Name`))
+
+NYC_subway_data <- select(NYC_subway_data, "Line", "Station Name", "Station Latitude", "Station Longitude", "Route Name", "Route Number", "Entry", "Vending", "Entrance Type", "ADA")
+
+head(NYC_subway_data)
+
+```
+
+Subset stations that serve A train
+
+```{r}
+
+A_train <- filter(NYC_subway_data, grepl("A", NYC_subway_data$`Route Name`) == TRUE)
+
+nrow(A_train %>% select("Line", "Station Name") %>% distinct())
+
+nrow(A_train %>% filter(ADA == TRUE) %>% select("Line", "Station Name") %>% distinct())
+
+```
+
+There are 60 distinct stations that serve the A train, and 17 of these stations are ADA compliant.
 
