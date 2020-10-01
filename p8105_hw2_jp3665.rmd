@@ -231,3 +231,66 @@ nrow(A_train %>% filter(ADA == TRUE) %>% select("Line", "Station Name") %>% dist
 
 There are 60 distinct stations that serve the A train, and 17 of these stations are ADA compliant.
 
+
+# Problem 3
+
+I already created a subdirectory for the data used in this problem set and I downloaded the FiveThirtyEight data to this subdirectory.
+
+## Read FiveThirtyEight data
+
+Read `pols-month.csv`
+
+```{r}
+
+pols_month_data <- read.csv("./data/fivethirtyeight_datasets/pols-month.csv")
+
+```
+
+Read `unemployment.csv`
+
+```{r}
+
+unemployment_data <- read.csv("./data/fivethirtyeight_datasets/unemployment.csv")
+
+```
+
+Read `snp.csv`
+
+```{r}
+
+snp_data <- read.csv("./data/fivethirtyeight_datasets/snp.csv")
+
+```
+
+## Cleaen pols_month_data
+
+Clean `pols_month_data` by parsing date into `year`, `month` and `day`, changing numeric months to full month names, and removing `day` column
+
+```{r}
+
+head(pols_month_data)
+
+pols_month_data <- separate(pols_month_data, "mon", c("year", "month", "day"), sep = "-", remove = TRUE, extra = "warn", fill = "warn")
+
+pols_month_data$month <- as.numeric(pols_month_data$month)
+
+months <- list(name = month.name, num = 1:12)
+
+pols_month_data <- pols_month_data %>% mutate(month = replace(month, months$num, months$name))
+
+pols_month_data <- pols_month_data %>% select(-day)
+
+```
+
+Remove `prez_dem` and `prez_gop` and combine into `president` variable
+
+```{r}
+
+pols_month_data <- pols_month_data %>% mutate("president" = ifelse(prez_gop == 1, "gop", "dem"))
+
+pols_month_data <- pols_month_data %>% select(-prez_gop, -prez_dem)
+
+head(pols_month_data)
+
+```
+
