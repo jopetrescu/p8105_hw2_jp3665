@@ -319,11 +319,32 @@ head(snp_data)
 
 ## Clean unemployment_data
 
+Clean unemployment data by changing from wide form to long form and formating first two columns to match other datasets
+
 ```{r}
 
 head(unemployment_data)
 
+unemployment_data <- unemployment_data %>% gather("month", "unemployment", -Year)
 
+colnames(unemployment_data) [1] <- "year"
+
+head(unemployment_data)
+
+months_abbrev <- list("name" = month.name, "abb" = month.abb)
+
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Jan", "January")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Feb", "February")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Mar", "March")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Apr", "April")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Jun", "June")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Jul", "July")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Aug", "August")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Sep", "September")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Oct", "October")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Nov", "November")
+unemployment_data$month <- unemployment_data$month %>% str_replace_all("Dec", "December")
 
 ```
+
 
